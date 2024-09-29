@@ -1,6 +1,6 @@
 [project]
 name = "lark-oapi-compact"
-version = "1.0.0-dev"
+version = "0.1.1"
 description = "Lark OpenAPI SDK for Python"
 authors = [{ name = "L8ng", email = "straydragonl@foxmail.com" }]
 readme = "README.md"
