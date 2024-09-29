@@ -22,9 +22,9 @@ from lark_oapi_compact.remaintain.extra.service.drive_permission.v2.api import (
 )
 from lark_oapi_compact.remaintain.extra.service.sheets.v2 import Service as ExtraSheetsV2Service
 from lark_oapi_compact.remaintain.extra.service.sheets.v2 import model as extra_sheets_v2_model
-from lark_oapi_compact.remaintain.shortcut.compact import FeishuOpenAPICompactSettings
-from lark_oapi_compact.remaintain.shortcut.sheets import utils
-from lark_oapi_compact.remaintain.shortcut.sheets.models import (
+from lark_oapi_compact.shortcut.compact import FeishuOpenAPICompactSettings
+from lark_oapi_compact.shortcut.sheets import utils
+from lark_oapi_compact.shortcut.sheets.models import (
     CellPos,
     CellsRange,
     SheetRange,

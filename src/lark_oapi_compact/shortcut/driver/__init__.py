@@ -11,7 +11,7 @@ from lark_oapi_compact.remaintain.extra.service.drive_explorer.v2 import (
 from lark_oapi_compact.remaintain.extra.service.drive_explorer.v2 import (
     model as extra_driver_v2_model,
 )
-from lark_oapi_compact.remaintain.shortcut.compact import FeishuOpenAPICompactSettings
+from lark_oapi_compact.shortcut.compact import FeishuOpenAPICompactSettings
 
 
 class FeishuDriverShortcutOperationError(Exception):
