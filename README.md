@@ -1,7 +1,7 @@
 # oapi-sdk-python-compact
 
 ![PyPI - Version](https://img.shields.io/pypi/v/lark-oapi-compact)
-[![image](https://img.shields.io/pypi/pyversions/uv.svg)](https://pypi.python.org/pypi/lark-oapi-compact)
+[![image](https://img.shields.io/pypi/pyversions/lark-oapi-compact.svg)](https://pypi.python.org/pypi/lark-oapi-compact)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/charliermarsh/ruff/main/assets/badge/v0.json)](https://github.com/charliermarsh/ruff)
 [![uv](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json)](https://github.com/astral-sh/uv)
 

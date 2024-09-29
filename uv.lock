@@ -342,7 +342,7 @@ wheels = [
 
 [[package]]
 name = "lark-oapi-compact"
-version = "1.0.0.dev0"
+version = "0.1.2"
 source = { editable = "." }
 dependencies = [
     { name = "attrs" },
