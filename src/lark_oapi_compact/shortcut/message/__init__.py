@@ -1,6 +1,7 @@
 import dataclasses
 
 import attr
+
 from lark_oapi_compact.remaintain.extra import ACCESS_TOKEN_TYPE_TENANT
 from lark_oapi_compact.remaintain.extra.api import Request, set_timeout
 from lark_oapi_compact.remaintain.shortcut.compact import FeishuOpenAPICompactSettings

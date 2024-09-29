@@ -3,6 +3,7 @@ from typing import Optional
 
 import urllib3
 from lark_oapi import Client
+
 from lark_oapi_compact.remaintain import extra
 from lark_oapi_compact.remaintain.extra import DOMAIN_FEISHU, LEVEL_ERROR
 

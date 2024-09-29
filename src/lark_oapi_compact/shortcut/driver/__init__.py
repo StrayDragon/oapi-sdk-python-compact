@@ -3,6 +3,8 @@ from io import BytesIO
 from typing import Optional
 
 import lark_oapi.api.drive.v1
+from typing_extensions import Literal
+
 from lark_oapi_compact.remaintain.extra.service.drive_explorer.v2 import (
     Service as ExtraDriverV2Service,
 )
@@ -10,7 +12,6 @@ from lark_oapi_compact.remaintain.extra.service.drive_explorer.v2 import (
     model as extra_driver_v2_model,
 )
 from lark_oapi_compact.remaintain.shortcut.compact import FeishuOpenAPICompactSettings
-from typing_extensions import Literal
 
 
 class FeishuDriverShortcutOperationError(Exception):

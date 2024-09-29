@@ -12,6 +12,8 @@ from lark_oapi.api.sheets.v3 import (
     Sheet,
     Spreadsheet,
 )
+from typing_extensions import Literal
+
 from lark_oapi_compact.remaintain.extra.service.drive_permission.v2 import (
     model as extra_drive_permission_v2_model,
 )
@@ -28,7 +30,6 @@ from lark_oapi_compact.remaintain.shortcut.sheets.models import (
     SheetRange,
     cell_value_support_data_types,
 )
-from typing_extensions import Literal
 
 
 class FeishuSheetsShortcutOperationError(Exception):
