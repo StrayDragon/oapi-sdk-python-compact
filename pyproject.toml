@@ -46,6 +46,14 @@ build-backend = "hatchling.build"
 dev-dependencies = [
     "ipython>=7.34.0",
     "pre-commit>=2.21.0",
+    "pytest-cov>=4.1.0",
     "pytest>=7.4.4",
     "ruff>=0.6.8",
+]
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-ra -q"
+testpaths = [
+    "tests",
 ]
