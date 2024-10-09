@@ -1,0 +1,46 @@
+name: Tests
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  test:
+    if: github.event.issue.pull_request && github.event.comment.body == './run-test' && github.event.comment.user.login == github.repository_owner
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - uses: astral-sh/setup-uv@v3
+      with:
+        enable-cache: true
+
+    - uses: actions/setup-python@v5
+      with:
+        python-version-file: "pyproject.toml"
+
+    - name: Install dependencies
+      run: |
+        uv sync --all-extras --dev
+
+    - name: Run tests with pytest
+      env:
+        FEISHU_APP_ID: ${{ secrets.FEISHU_APP_ID }}
+        FEISHU_APP_SECRET: ${{ secrets.FEISHU_APP_SECRET }}
+        FEISHU_GROUP_ROBOT_WEBHOOK_URL: ${{ secrets.FEISHU_GROUP_ROBOT_WEBHOOK_URL }}
+        FEISHU_GROUP_ROBOT_SIGN_SECRET: ${{ secrets.FEISHU_GROUP_ROBOT_SIGN_SECRET }}
+      run: |
+        uv run pytest tests/ --cov=src/lark_oapi_compact/shortcut --cov-report=xml
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        fail_ci_if_error: true
+
+    - name: Add reaction
+      uses: peter-evans/create-or-update-comment@v3
+      with:
+        comment-id: ${{ github.event.comment.id }}
+        reactions: 'rocket'
