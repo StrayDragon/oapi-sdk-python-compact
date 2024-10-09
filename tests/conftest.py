@@ -15,7 +15,7 @@ def feishu_settings():
     return FeishuOpenAPICompactSettings(
         app_id=app_id,
         app_secret=app_secret,
-        name="Test Feishu OAPI App",
+        name="Test Feishu OAPI APP",
     )
 
 
