@@ -1,6 +1,7 @@
 import dataclasses
 import datetime
-from typing import Any, Dict, List, Optional, Sequence, Tuple
+from collections.abc import Sequence
+from typing import Any, Literal
 
 from lark_oapi.api.sheets.v3 import (
     CreateSpreadsheetRequest,
@@ -12,7 +13,6 @@ from lark_oapi.api.sheets.v3 import (
     Sheet,
     Spreadsheet,
 )
-from typing_extensions import Literal
 
 from lark_oapi_compact.remaintain.extra.service.drive_permission.v2 import (
     model as extra_drive_permission_v2_model,
@@ -111,7 +111,7 @@ class FeishuSheetsShortcut:
     def get_spreadsheet_sheets(
         self,
         ss_token: str,
-    ) -> List[Sheet]:
+    ) -> list[Sheet]:
         client = self.s.upstream_client
         req = QuerySpreadsheetSheetRequest.builder().spreadsheet_token(ss_token).build()
         resp = client.sheets.v3.spreadsheet_sheet.query(req)
@@ -132,7 +132,7 @@ class FeishuSheetsShortcut:
         ss_token: str,
         sheet_id: str,
         text: str,
-        cond_cells_range: Optional[CellsRange] = None,
+        cond_cells_range: CellsRange | None = None,
         cond_match_case: bool = False,
         cond_match_entire_cell: bool = False,
         cond_search_by_regex: bool = False,
@@ -180,13 +180,13 @@ class FeishuSheetsShortcut:
         self,
         ss_token: str,
         sheet_id: str,
-        texts: List[str],
-        cond_cells_range: Optional[CellsRange] = None,
+        texts: list[str],
+        cond_cells_range: CellsRange | None = None,
         cond_match_case: bool = False,
         cond_match_entire_cell: bool = False,
         cond_search_by_regex: bool = False,
         cond_include_formulas: bool = False,
-    ) -> Optional[FindReplaceResult]:
+    ) -> FindReplaceResult | None:
         further_cell_range = cond_cells_range
         result = None
         for text in texts:
@@ -229,10 +229,10 @@ class FeishuSheetsShortcut:
     def batch_handle_sheets(
         self,
         ss_token: str,
-        add_sheet: Optional[extra_sheets_v2_model.AddSheet] = None,
-        copy_sheet: Optional[extra_sheets_v2_model.CopySheet] = None,
-        delete_sheet: Optional[extra_sheets_v2_model.DeleteSheet] = None,
-        update_sheet: Optional[extra_sheets_v2_model.UpdateSheet] = None,
+        add_sheet: extra_sheets_v2_model.AddSheet | None = None,
+        copy_sheet: extra_sheets_v2_model.CopySheet | None = None,
+        delete_sheet: extra_sheets_v2_model.DeleteSheet | None = None,
+        update_sheet: extra_sheets_v2_model.UpdateSheet | None = None,
     ):
         req_params = dict(
             add_sheet=add_sheet,
@@ -262,7 +262,7 @@ class FeishuSheetsShortcut:
         ss_token: str,
         title: str,
         index: int = 0,
-    ) -> Dict[str, str]:
+    ) -> dict[str, str]:
         r = extra_sheets_v2_model
         op_sheet = r.AddSheet(
             properties=r.Properties(
@@ -349,8 +349,8 @@ class FeishuSheetsShortcut:
         self,
         ss_token: str,
         sheet_id: str,
-        cr: Optional[CellsRange] = None,
-        values: Optional[Sequence[Sequence[Any]]] = None,
+        cr: CellsRange | None = None,
+        values: Sequence[Sequence[Any]] | None = None,
         headers: Sequence[Any] = (),
     ) -> None:
         if not values:
@@ -394,8 +394,8 @@ class FeishuSheetsShortcut:
         self,
         ss_token: str,
         sheet_id: str,
-        cr: Optional[CellsRange] = None,
-        values: Optional[Sequence[Sequence[Any]]] = None,
+        cr: CellsRange | None = None,
+        values: Sequence[Sequence[Any]] | None = None,
         headers: Sequence[Any] = (),
         insert_data_option: Literal["OVERWRITE", "INSERT_ROWS"] = "OVERWRITE",
     ) -> None:
@@ -441,7 +441,7 @@ class FeishuSheetsShortcut:
         self,
         ss_token: str,
         sheet_id: str,
-        cr_values: List[Tuple[CellsRange, Sequence[Sequence[Any]]]],
+        cr_values: list[tuple[CellsRange, Sequence[Sequence[Any]]]],
     ) -> None:
         if not cr_values:
             raise FeishuSheetsShortcutOperationError("input invalid")
@@ -483,10 +483,10 @@ class FeishuSheetsShortcut:
         self,
         ss_token: str,
         sheet_id: str,
-        crs: List[CellsRange],
+        crs: list[CellsRange],
         value_render_option: Literal["ToString", "FormattedValue", "Formula", "UnformattedValue"] = "ToString",
         date_time_render_option: str = "FormattedString",
-    ) -> Dict[str, List[list]]:
+    ) -> dict[str, list[list]]:
         if not crs:
             raise FeishuSheetsShortcutOperationError("input invalid")
         range_texts = ",".join([f"{sheet_id}!" + cr.to_param_range_pos_part() for cr in crs])
@@ -511,7 +511,7 @@ class FeishuSheetsShortcut:
         sheet_id: str,
         formula_text: str,
         result_cell_pos: CellPos,
-        auto_merge_cells_range: Optional[CellsRange] = None,
+        auto_merge_cells_range: CellsRange | None = None,
     ) -> None:
         values = [
             [
@@ -541,7 +541,7 @@ class FeishuSheetsShortcut:
         sheet_id: str,
         target_cells_range: CellsRange,
         result_cell_pos: CellPos,
-        auto_merge_cells_range: Optional[CellsRange] = None,
+        auto_merge_cells_range: CellsRange | None = None,
     ) -> None:
         self.update_formula_value_cell(
             ss_token=ss_token,
@@ -654,7 +654,7 @@ class FeishuSheetsShortcut:
         self,
         ss_token: str,
         sheet_id: str,
-        values: List[list],
+        values: list[list],
         headers: Sequence[Any] = (),
     ):
         self.truncate_sheet(
@@ -673,7 +673,7 @@ class FeishuSheetsShortcut:
         ss_token: str,
         sheet_id: str,
         cell_pos: CellPos,
-        image_byte_array: List[int],
+        image_byte_array: list[int],
         image_name: str = "",
     ):
         cp = cell_pos.to_param_range()

@@ -1,6 +1,5 @@
 import functools
 import re
-from typing import Optional
 
 from pydantic import BaseModel
 
@@ -41,8 +40,8 @@ class CellPos(BaseModel):
 
 
 class CellsRange(BaseModel):
-    start_pos: Optional[CellPos]
-    end_pos: Optional[CellPos]
+    start_pos: CellPos | None
+    end_pos: CellPos | None
 
     @classmethod
     def from_literal(cls, s: str):

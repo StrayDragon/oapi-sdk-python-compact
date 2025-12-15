@@ -1,9 +1,7 @@
-from typing import Optional
-
 import attr
 
 
-def convert_model_to_dict(o) -> Optional[dict]:
+def convert_model_to_dict(o) -> dict | None:
     if attr.has(o):
         return attr.asdict(o)
     elif hasattr(o, "_types"):
@@ -12,7 +10,7 @@ def convert_model_to_dict(o) -> Optional[dict]:
         return None
 
 
-def convert_remaintain_extra_model_to_dict(o) -> Optional[dict]:
+def convert_remaintain_extra_model_to_dict(o) -> dict | None:
     if not hasattr(o, "_types"):
         return None
     kv = {}

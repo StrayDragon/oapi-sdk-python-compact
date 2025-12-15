@@ -1,5 +1,4 @@
 import dataclasses
-from typing import Optional
 
 import urllib3
 from lark_oapi import Client
@@ -20,7 +19,7 @@ class FeishuOpenAPICompactSettings:
     app_secret: str
     name: str = "Feishu OAPI App"
     log_level: int = LEVEL_ERROR
-    requests_retry_config: Optional[urllib3.Retry] = None
+    requests_retry_config: urllib3.Retry | None = None
 
     # post init
     remaintain_extra_app_settings: extra.AppSettings = dataclasses.field(init=False)

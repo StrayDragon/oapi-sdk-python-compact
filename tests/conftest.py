@@ -1,6 +1,7 @@
 import os
 
 import pytest
+
 from lark_oapi_compact.shortcut.compact import FeishuOpenAPICompactSettings
 from lark_oapi_compact.shortcut.driver import FeishuDriverShortcut
 from lark_oapi_compact.shortcut.sheets import FeishuSheetsShortcut

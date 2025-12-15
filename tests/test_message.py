@@ -1,4 +1,5 @@
 import pytest
+
 from lark_oapi_compact.shortcut.message import FeishuMessageShortcut
 
 

@@ -4,7 +4,6 @@ import hashlib
 import hmac
 import os
 import time
-from typing import Optional
 
 import requests
 import urllib3
@@ -26,7 +25,7 @@ class FeishuGroupRobotShortCut:
     name: str = "群机器人"
     sign_secret: str = ""
     requests_session: requests.Session = dataclasses.field(init=False)
-    requests_retry_config: Optional[urllib3.Retry] = None
+    requests_retry_config: urllib3.Retry | None = None
 
     def __post_init__(self):
         self.requests_session = requests.Session()

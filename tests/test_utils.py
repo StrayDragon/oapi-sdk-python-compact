@@ -1,4 +1,5 @@
 import attr
+
 from lark_oapi_compact.shortcut.utils import convert_model_to_dict, convert_remaintain_extra_model_to_dict, print_model
 
 

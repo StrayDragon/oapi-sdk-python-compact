@@ -1,6 +1,7 @@
 import os
 
 import pytest
+
 from lark_oapi_compact.shortcut.group_robot import FeishuGroupRobotShortCut
 
 
