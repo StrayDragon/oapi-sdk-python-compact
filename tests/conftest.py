@@ -1,6 +1,12 @@
 import os
 
 import pytest
+from dotenv import load_dotenv
+
+try:
+    load_dotenv()
+except:  # noqa
+    pass
 
 from lark_oapi_compact.shortcut.compact import FeishuOpenAPICompactSettings
 from lark_oapi_compact.shortcut.driver import FeishuDriverShortcut
