@@ -21,7 +21,7 @@ class FeishuGroupRobotOperationError(Exception):
 class FeishuGroupRobotShortCut:
     """
     doc: https://open.feishu.cn/document/client-docs/bot-v3/add-custom-bot
-    自定义机器人的频率控制和普通应用不同，为 100 次/分钟，5 次/秒。
+    自定义机器人的频率控制和普通应用不同,为 100 次/分钟,5 次/秒.
     """
 
     web_hook_url: str

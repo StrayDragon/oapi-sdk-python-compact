@@ -5,12 +5,9 @@ import pytest
 from lark_oapi_compact.compact import (
     BaseModel,
     CompatBase,
-    compat_from_dict,
-    compat_from_json,
     compat_to_dict,
     compat_to_json,
     create_field,
-    get_version_info,
 )
 from lark_oapi_compact.shortcut.sheets.models import CellPos, CellsRange
 from lark_oapi_compact.shortcut.sheets.models.cell_value_support_data_types import (
@@ -19,15 +16,6 @@ from lark_oapi_compact.shortcut.sheets.models.cell_value_support_data_types impo
     MentionUser,
     TextLink,
 )
-
-
-def test_version_info():
-    """Test that we can get version information."""
-    info = get_version_info()
-    assert "version" in info
-    assert "is_v2" in info
-    assert "major" in info
-    assert info["major"] in [1, 2]
 
 
 def test_basic_model_creation():

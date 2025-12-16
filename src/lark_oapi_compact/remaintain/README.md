@@ -1,7 +1,7 @@
-[**飞书，点这里**](README.zh.md) | Larksuite(Overseas)
+[**飞书,点这里**](README.zh.md) | Larksuite(Overseas)
 
-- 如果使用的是飞书，请看 [**飞书，点这里**](README.zh.md) ，飞书与Larksuite使用的域名不一样，引用的文档地址也是不同的。(If you are using FeiShu, please see [**
-  飞书，点这里**](README.zh.md) , Feishu and larksuite use different domain names and reference different document addresses.)
+- 如果使用的是飞书,请看 [**飞书,点这里**](README.zh.md) ,飞书与Larksuite使用的域名不一样,引用的文档地址也是不同的.(If you are using FeiShu, please see [**
+  飞书,点这里**](README.zh.md) , Feishu and larksuite use different domain names and reference different document addresses.)
 
 # LarkSuite open api SDK
 
@@ -49,7 +49,7 @@ pip install larksuite-oapi==1.0.33
 - Developer background: the management background for developers to develop
   applications, [more introduction](https://open.larksuite.cn/app/) .
 - Cutome APP: the application can only be installed and used in the
-  enterprise，[more introduction](https://open.larksuite.com/document/ukzMxEjL5MTMx4SOzETM/uEjNwYjLxYDM24SM2AjN) .
+  enterprise,[more introduction](https://open.larksuite.com/document/ukzMxEjL5MTMx4SOzETM/uEjNwYjLxYDM24SM2AjN) .
 - Marketplace App: The app will be displayed in [App Directory](https://app.larksuite.com/) Display, each enterprise can
   choose to install.
 
@@ -65,7 +65,7 @@ pip install larksuite-oapi==1.0.33
 
 - Since the SDK has encapsulated the app_access_token、tenant_access_token So when calling the business API, you don't
   need to get the app_access_token、tenant_access_token. If the business interface needs to use user_access_token, which
-  needs to be set（request.SetUserAccessToken("user_access_token")), Please refer to README.md -> How to build a request(
+  needs to be set(request.SetUserAccessToken("user_access_token")), Please refer to README.md -> How to build a request(
   Request)
 - Some of the old API do not have a direct SDK to use. They can use the `native` mode.
 
@@ -77,8 +77,8 @@ from lark_oapi_compact.remaintain.extra.api import Request, set_timeout
 from lark_oapi_compact.remaintain.extra import Config, ACCESS_TOKEN_TYPE_TENANT, DOMAIN_LARK_SUITE, DOMAIN_FEISHU, DefaultLogger, LEVEL_DEBUG
 
 # Configuration of "Custom App", parameter description:
-# AppID、AppSecret: "Developer Console" -> "Credentials"（App ID、App Secret）
-# VerificationToken、EncryptKey: "Developer Console" -> "Event Subscriptions"（Verification Token、Encrypt Key）
+# AppID、AppSecret: "Developer Console" -> "Credentials"(App ID、App Secret)
+# VerificationToken、EncryptKey: "Developer Console" -> "Event Subscriptions"(Verification Token、Encrypt Key)
 # More optional configurations are as follows: README.md -> How to build app settings(AppSettings)
 app_settings = Config.new_internal_app_settings_from_env()
 
@@ -116,7 +116,7 @@ if __name__ == '__main__':
 
 - [Subscribe to events](https://open.larksuite.com/document/uMzMyEjLzMjMx4yMzITM/uETM4QjLxEDO04SMxgDN), to understand
   the process and precautions of subscribing to events.
-- For more use examples, please refer to [sample/event](sample/event)（including: use in combination with flask）
+- For more use examples, please refer to [sample/event](sample/event)(including: use in combination with flask)
 
 #### Example of using "Custom App" to subscribe [App First Enabled](https://open.larksuite.com/document/uMzMyEjLzMjMx4yMzITM/uYjMyYjL2IjM24iNyIjN) event.
 
@@ -133,8 +133,8 @@ from flask.helpers import make_response
 from lark_oapi_compact.remaintain.extra import Config, Context, DOMAIN_FEISHU, DOMAIN_LARK_SUITE, DefaultLogger, LEVEL_DEBUG
 
 # Configuration of "Custom App", parameter description:
-# AppID、AppSecret: "Developer Console" -> "Credentials"（App ID、App Secret）
-# VerificationToken、EncryptKey: "Developer Console" -> "Event Subscriptions"（Verification Token、Encrypt Key）
+# AppID、AppSecret: "Developer Console" -> "Credentials"(App ID、App Secret)
+# VerificationToken、EncryptKey: "Developer Console" -> "Event Subscriptions"(Verification Token、Encrypt Key)
 # More optional configurations are as follows: README.md -> How to build app settings(AppSettings)
 app_settings = Config.new_internal_app_settings_from_env()
 
@@ -179,7 +179,7 @@ if __name__ == '__main__':
 
 - [Message Card Development Process](https://open.larksuite.com/document/uMzMyEjLzMjMx4yMzITM/ukzM3QjL5MzN04SOzcDN) , to
   understand the process and precautions of processing message cards
-- For more use examples, please refer to [sample/card](sample/card)（including: use in combination with flask）
+- For more use examples, please refer to [sample/card](sample/card)(including: use in combination with flask)
 
 #### Example of using "Custom App" to handling message card callback.
 
@@ -197,8 +197,8 @@ from flask import Flask, request
 from flask.helpers import make_response
 
 # Configuration of "Custom App", parameter description:
-# AppID、AppSecret: "Developer Console" -> "Credentials"（App ID、App Secret）
-# VerificationToken、EncryptKey: "Developer Console" -> "Event Subscriptions"（Verification Token、Encrypt Key）
+# AppID、AppSecret: "Developer Console" -> "Credentials"(App ID、App Secret)
+# VerificationToken、EncryptKey: "Developer Console" -> "Event Subscriptions"(Verification Token、Encrypt Key)
 # More optional configurations are as follows: README.md -> How to build app settings(AppSettings)
 app_settings = Config.new_internal_app_settings_from_env()
 
@@ -282,10 +282,10 @@ if __name__ == '__main__':
 from lark_oapi_compact.remaintain.extra import Config
 
 # To prevent application information leakage, in the configuration environment variables, the variables (4) are described as follows:
-# APP_ID: "Developer Console" -> "Credentials"（App ID）
-# APP_Secret: "Developer Console" -> "Credentials"（App Secret）
-# VERIFICATION_Token: VerificationToken、EncryptKey: "Developer Console" -> "Event Subscriptions"（Verification Token）
-# ENCRYPT_Key: VerificationToken、EncryptKey: "Developer Console" -> "Event Subscriptions"（Encrypt Key）
+# APP_ID: "Developer Console" -> "Credentials"(App ID)
+# APP_Secret: "Developer Console" -> "Credentials"(App Secret)
+# VERIFICATION_Token: VerificationToken、EncryptKey: "Developer Console" -> "Event Subscriptions"(Verification Token)
+# ENCRYPT_Key: VerificationToken、EncryptKey: "Developer Console" -> "Event Subscriptions"(Encrypt Key)
 # The configuration of "Custom App" is obtained through environment variables
 # HELP_DESK_ID: Help desk setting -> ID
 # HELP_DESK_TOKEN: Help desk setting -> Token
@@ -294,8 +294,8 @@ app_settings = Config.new_internal_app_settings_from_env()
 app_settings = Config.new_isv_app_settings_from_env()
 
 # Parameter Description:
-# AppID、AppSecret: "Developer Console" -> "Credentials"（App ID、App Secret）
-# VerificationToken、EncryptKey: "Developer Console" -> "Event Subscriptions"（Verification Token、Encrypt Key）
+# AppID、AppSecret: "Developer Console" -> "Credentials"(App ID、App Secret)
+# VerificationToken、EncryptKey: "Developer Console" -> "Event Subscriptions"(Verification Token、Encrypt Key)
 # The configuration of "Custom App"
 app_settings = Config.new_internal_app_settings(app_id="AppID", app_secret="AppSecret",
                                                 verification_token="VerificationToken", encrypt_key="EncryptKey",
@@ -313,7 +313,7 @@ app_settings = Config.new_isv_app_settings(app_id="AppID", app_secret="AppSecret
 - The implementation of logger is used to output the logs generated in the process of SDK processing, which is
   convenient for troubleshooting.
 - The implementation of store is used to save the access credentials (app/tenant_access_token), temporary voucher (
-  app_ticket）
+  app_ticket)
     - Redis is recommended. Please see the example code: [sample/config/config.py](sample/config/config.py) RedisStore
         - It can reduce the times of obtaining access credentials and prevent the frequency limit of calling access
           credentials interface.
@@ -392,7 +392,7 @@ status_code = ctx.get_http_status_code()
 
 - Since the SDK has encapsulated the app_access_token、tenant_access_token So when calling the business API, you don't
   need to get the app_access_token、tenant_access_token. If the business interface needs to use user_access_token, which
-  needs to be set（request.SetUserAccessToken("user_access_token")), Please refer to README.md -> How to build a request(
+  needs to be set(request.SetUserAccessToken("user_access_token")), Please refer to README.md -> How to build a request(
   Request)
 - For more use examples, please see: [sample/api/api.py](sample/api/api.py)
 
@@ -403,9 +403,9 @@ req = Request(...)
 
 # Send Request
 # Parameter Description:
-# conf: Overall configuration（Config）
+# conf: Overall configuration(Config)
 # Return value Description:
-# Response: response（= http response body）
+# Response: response(= http response body)
 resp = req.do(conf)
 
 print('request id = %s' % resp.get_request_id())

@@ -45,12 +45,12 @@ try:
             Field as FieldV1,
         )
         from pydantic import (
-            validator as validatorV1,
+            validator as validatorV1,  # type: ignore
         )
 
         # FieldInfo fallback for v1
         try:
-            from pydantic.fields import ModelField as FieldInfoV1
+            from pydantic.fields import ModelField as FieldInfoV1  # type: ignore
         except (ImportError, AttributeError):
             FieldInfoV1 = type  # type: ignore
 
@@ -241,15 +241,6 @@ def field_validator(*fields: str, **kwargs: Any) -> Any:
         return validator(*fields, pre=(mode == "before"))
 
 
-def get_version_info() -> dict[str, Any]:
-    """Get information about the Pydantic version being used."""
-    return {
-        "version": PYDANTIC_VERSION,
-        "is_v2": IS_V2,
-        "major": 2 if IS_V2 else 1,
-    }
-
-
 # Export public API
 __all__ = [
     # Core types
@@ -263,8 +254,6 @@ __all__ = [
     "create_field",
     # Validation
     "field_validator",
-    # Version info
-    "get_version_info",
     "IS_V2",
     "PYDANTIC_VERSION",
 ]

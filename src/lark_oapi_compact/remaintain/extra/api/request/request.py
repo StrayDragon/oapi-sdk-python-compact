@@ -421,7 +421,7 @@ class AccessToken:
         req = Request.send_by_auth(APP_ACCESS_TOKEN_INTERNAL_URL_PATH, "POST", req_json)
         resp = Handlers(conf, req).handle()
         if resp.code != ERR_CODE_OK:
-            raise APIError("obtain internal app access token，failure information:%s" % resp)
+            raise APIError("obtain internal app access token,failure information:%s" % resp)
         return AppAccessToken(resp.data["app_access_token"], resp.data["expire"])
 
     def get_isv_app_access_token(self):
@@ -439,7 +439,7 @@ class AccessToken:
         req = Request.send_by_auth(APP_ACCESS_TOKEN_ISV_URL_PATH, "POST", req_json)
         resp = Handlers(conf, req).handle()
         if resp.code != ERR_CODE_OK:
-            raise APIError("obtain isv app access token，failure information:%s" % resp)
+            raise APIError("obtain isv app access token,failure information:%s" % resp)
         return AppAccessToken(resp.data["app_access_token"], resp.data["expire"])
 
     def get_isv_tenant_access_token(self):
@@ -453,7 +453,7 @@ class AccessToken:
         req = Request.send_by_auth(TENANT_ACCESS_TOKEN_ISV_URL_PATH, "POST", req_json)
         resp = Handlers(self.handlers.config, req).handle()
         if resp.code != ERR_CODE_OK:
-            raise APIError("obtain isv tenant access token，failure information:%s" % resp)
+            raise APIError("obtain isv tenant access token,failure information:%s" % resp)
         tenant_access_token = TenantAccessToken(resp.data["tenant_access_token"], resp.data["expire"])
         return app_access_token, tenant_access_token
 
@@ -517,7 +517,7 @@ class AccessToken:
         req = Request.send_by_auth(TENANT_ACCESS_TOKEN_INTERNAL_URL_PATH, "POST", req_json)
         resp = Handlers(self.handlers.config, req).handle()
         if resp.code != ERR_CODE_OK:
-            raise APIError("obtain internal tenant access token，failure information:%s" % resp)
+            raise APIError("obtain internal tenant access token,failure information:%s" % resp)
         return TenantAccessToken(resp.data["tenant_access_token"], resp.data["expire"])
 
 
