@@ -4,7 +4,7 @@ version = "0.1.3"
 description = "Lark OpenAPI SDK for Python"
 authors = [{ name = "L8ng", email = "straydragonl@foxmail.com" }]
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.8"
 license = { text = "MIT" }
 keywords = [
   "feishu",
@@ -18,22 +18,28 @@ classifiers = [
   "Programming Language :: Python",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
-  "Programming Language :: Python :: 3.14",
   "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 
 dependencies = [
     # Upstream/v2_main https://github.com/larksuite/oapi-sdk-python
-    "lark-oapi==1.4.24",
+    # Keep latest for API compatibility
+    "lark-oapi>=1.4.24",
     # ---
-    "pydantic>=2.12.0",
-    # Upstream/main old sdkhttps://github.com/larksuite/oapi-sdk-python
-    "attrs>=25.4.0",
-    "pycryptodome>=3.23.0",
-    "requests>=2.32.5",
-    "typing_extensions>=4.15.0",
+    # Pydantic compatibility - supports both v1 and v2
+    # v1 for Python 3.8 compatibility, v2 for Python 3.9+, we use pydantic_compact to handle it
+    "pydantic>=1.10.14,<3.0",
+    # Upstream/main old sdk https://github.com/larksuite/oapi-sdk-python
+    "attrs>=22.2.0",
+    "pycryptodome>=3.21.0",
+    "requests>=2.32.0",
+    "typing_extensions>=4.12.0",
 ]
 
 [project.urls]
@@ -47,11 +53,12 @@ build-backend = "hatchling.build"
 
 [dependency-groups]
 dev = [
-    "ipython>=8.37.0",
-    "pre-commit>=4.5.0",
-    "pytest-cov>=7.0.0",
-    "pytest>=9.0.2",
-    "ruff>=0.14.9",
+    "basedpyright>=1.36.1",
+    "ipython>=8.12.0",
+    "pre-commit>=3.5.0",
+    "pytest-cov>=4.1.0",
+    "pytest>=8.0.0",
+    "ruff>=0.1.15",
 ]
 
 [tool.pytest.ini_options]
@@ -89,7 +96,7 @@ exclude = [
     "src/lark_oapi_compact/remaintain/extra",
 ]
 
-target-version = "py312"
+target-version = "py38"
 
 [tool.ruff.lint]
 # Enable Pyflakes (`F`) and a subset of the pycodestyle (`E`)  codes by default.
@@ -101,10 +108,17 @@ select = [
     "W",
     # isort
     "I001",
-    # pyupgrade subset
+    # pyupgrade subset (excluding version-specific suggestions)
     "UP",
 ]
-ignore = []
+ignore = [
+    # Keep Optional[...] for Python 3.8 compatibility
+    "UP045",
+    # Keep List, Dict, Tuple for Python 3.8 compatibility
+    "UP006",
+    # Ignore unused imports in compact module for dynamic conditional imports
+    "F401",
+]
 per-file-ignores = {}
 
 # Allow fix for all enabled rules (when `--fix`) is provided.
@@ -126,3 +140,32 @@ skip-magic-trailing-comma = false
 
 # Like Black, automatically detect the appropriate line ending.
 line-ending = "auto"
+
+[tool.basedpyright]
+# Python version to target
+pythonVersion = "3.7"
+
+# Use standard type checking mode
+typeCheckingMode = "standard"
+
+# Ignore certain warnings for compatibility
+ignore = [
+    # Allow unused variables when underscore-prefixed
+    "reportUnusedVariable",
+    # Allow missing type annotations in some cases for backward compatibility
+    "reportUnannotatedClassAttribute",
+    # Ignore some import issues in complex cases
+    "reportUnknownVariableType",
+    "reportUnknownParameterType",
+    "reportUnknownArgumentType",
+    "reportUnknownVariableType",
+    # Python 3.8 compatibility issues with type expressions
+    "reportInvalidTypeForm",
+]
+
+# Exclude certain paths
+exclude = [
+    "src/lark_oapi_compact/remaintain/**",
+    "**/node_modules/**",
+    "**/__pycache__/**",
+]

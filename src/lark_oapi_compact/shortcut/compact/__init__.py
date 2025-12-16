@@ -1,8 +1,12 @@
+from __future__ import annotations
+
 import dataclasses
+from typing import Optional
 
 import urllib3
 from lark_oapi import Client
 
+from lark_oapi_compact.compact import pydantic_compat
 from lark_oapi_compact.remaintain import extra
 from lark_oapi_compact.remaintain.extra import DOMAIN_FEISHU, LEVEL_ERROR
 
@@ -19,7 +23,7 @@ class FeishuOpenAPICompactSettings:
     app_secret: str
     name: str = "Feishu OAPI App"
     log_level: int = LEVEL_ERROR
-    requests_retry_config: urllib3.Retry | None = None
+    requests_retry_config: Optional[urllib3.Retry] = None
 
     # post init
     remaintain_extra_app_settings: extra.AppSettings = dataclasses.field(init=False)

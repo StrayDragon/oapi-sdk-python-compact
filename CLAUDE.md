@@ -87,8 +87,8 @@ FEISHU_SKIP_LIVE_TESTS=true uv run pytest tests/ -v
 ```
 
 ### Python Version
-- **Target**: Python 3.12+
-- **Supported**: 3.12, 3.13, 3.14
+- **Target**: Python 3.8+
+- **Supported**: 3.7, 3.8
 - Uses modern `dependency-groups.dev` format for uv
 
 ## Code Quality Tools

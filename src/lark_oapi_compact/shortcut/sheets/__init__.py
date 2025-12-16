@@ -1,7 +1,9 @@
+from __future__ import annotations
+
 import dataclasses
 import datetime
 from collections.abc import Sequence
-from typing import Any, Literal
+from typing import Any, List, Literal, Optional, Tuple
 
 from lark_oapi.api.sheets.v3 import (
     CreateSpreadsheetRequest,
@@ -61,10 +63,10 @@ class FeishuSheetsShortcut:
         "anyone_editable" - 获得链接的任何人可编辑
         """
         resp = self.extra_drive_permission_v2_service.publics.update(
-            body=extra_drive_permission_v2_model.PublicUpdateReqBody(
-                token=ss_token,
-                type="sheet",
-                link_share_entity=link_share_entity,
+            body=extra_drive_permission_v2_model.PublicUpdateReqBody(  # type: ignore[arg-type]
+                token=ss_token,  # type: ignore[arg-type]
+                type="sheet",  # type: ignore[arg-type]
+                link_share_entity=link_share_entity,  # type: ignore[arg-type]
             ),
         ).do()
         if resp.code != 0:
@@ -77,6 +79,7 @@ class FeishuSheetsShortcut:
         auto_share_in_tenant: bool = False,
     ) -> Spreadsheet:
         client = self.s.upstream_client
+        assert client is not None
         req = (
             CreateSpreadsheetRequest.builder()
             .request_body(
@@ -91,7 +94,7 @@ class FeishuSheetsShortcut:
             )
             .build()
         )
-        resp = client.sheets.v3.spreadsheet.create(req)
+        resp = client.sheets.v3.spreadsheet.create(req)  # type: ignore[attr-defined]
         if not resp.success() or not resp.data or not resp.data.spreadsheet:
             raise FeishuSheetsShortcutOperationError(
                 str(
@@ -111,10 +114,11 @@ class FeishuSheetsShortcut:
     def get_spreadsheet_sheets(
         self,
         ss_token: str,
-    ) -> list[Sheet]:
+    ) -> List[Sheet]:
         client = self.s.upstream_client
+        assert client is not None
         req = QuerySpreadsheetSheetRequest.builder().spreadsheet_token(ss_token).build()
-        resp = client.sheets.v3.spreadsheet_sheet.query(req)
+        resp = client.sheets.v3.spreadsheet_sheet.query(req)  # type: ignore[attr-defined]
         if not resp.success() or not resp.data or not resp.data.sheets:
             raise FeishuSheetsShortcutOperationError(
                 str(
@@ -132,13 +136,14 @@ class FeishuSheetsShortcut:
         ss_token: str,
         sheet_id: str,
         text: str,
-        cond_cells_range: CellsRange | None = None,
+        cond_cells_range: Optional[CellsRange] = None,
         cond_match_case: bool = False,
         cond_match_entire_cell: bool = False,
         cond_search_by_regex: bool = False,
         cond_include_formulas: bool = False,
     ) -> FindReplaceResult:
         client = self.s.upstream_client
+        assert client is not None
         range_ = sheet_id
         if isinstance(cond_cells_range, CellsRange):
             cond_cells_range_literal = cond_cells_range.to_param_range_pos_part()
@@ -163,7 +168,7 @@ class FeishuSheetsShortcut:
             )
             .build()
         )
-        resp = client.sheets.v3.spreadsheet_sheet.find(req)
+        resp = client.sheets.v3.spreadsheet_sheet.find(req)  # type: ignore[attr-defined]
         if not resp.success() or not resp.data or not resp.data.find_result:
             raise FeishuSheetsShortcutOperationError(
                 str(
@@ -180,13 +185,13 @@ class FeishuSheetsShortcut:
         self,
         ss_token: str,
         sheet_id: str,
-        texts: list[str],
-        cond_cells_range: CellsRange | None = None,
+        texts: List[str],
+        cond_cells_range: Optional[CellsRange] = None,
         cond_match_case: bool = False,
         cond_match_entire_cell: bool = False,
         cond_search_by_regex: bool = False,
         cond_include_formulas: bool = False,
-    ) -> FindReplaceResult | None:
+    ) -> Optional[FindReplaceResult]:
         further_cell_range = cond_cells_range
         result = None
         for text in texts:
@@ -213,14 +218,21 @@ class FeishuSheetsShortcut:
                     cp_texts = result.matched_formula_cells
             if not cp_texts:
                 break
-            cp_texts.sort(key=lambda t: CellPos.from_literal(t))
+
+            # Filter out None values and sort by cell position
+            valid_positions = [(t, CellPos.from_literal(t)) for t in cp_texts if CellPos.from_literal(t) is not None]
+            if not valid_positions:
+                break
+            valid_positions.sort(key=lambda item: (item[1].x or "", item[1].y or 0))  # type: ignore[attr-defined]
+
             try:
-                start_cp, end_cp = CellPos.from_literal(cp_texts[0]), CellPos.from_literal(cp_texts[-1])
+                start_cp = valid_positions[0][1]
+                end_cp = valid_positions[-1][1]
             except Exception:
                 break
-            if start_cp.x == end_cp.x:
+            if start_cp and end_cp and start_cp.x == end_cp.x:
                 start_cp.x = end_cp.x = ""
-            else:
+            elif start_cp and end_cp:
                 start_cp.y = end_cp.y = 0
             further_cell_range = CellsRange(start_pos=start_cp, end_pos=end_cp)
 
@@ -229,10 +241,10 @@ class FeishuSheetsShortcut:
     def batch_handle_sheets(
         self,
         ss_token: str,
-        add_sheet: extra_sheets_v2_model.AddSheet | None = None,
-        copy_sheet: extra_sheets_v2_model.CopySheet | None = None,
-        delete_sheet: extra_sheets_v2_model.DeleteSheet | None = None,
-        update_sheet: extra_sheets_v2_model.UpdateSheet | None = None,
+        add_sheet: Optional[extra_sheets_v2_model.AddSheet] = None,
+        copy_sheet: Optional[extra_sheets_v2_model.CopySheet] = None,
+        delete_sheet: Optional[extra_sheets_v2_model.DeleteSheet] = None,
+        update_sheet: Optional[extra_sheets_v2_model.UpdateSheet] = None,
     ):
         req_params = dict(
             add_sheet=add_sheet,
@@ -241,10 +253,12 @@ class FeishuSheetsShortcut:
             update_sheet=update_sheet,
         )
         r = extra_sheets_v2_model
-        req = r.SpreadsheetsSheetsBatchUpdateReqBody(
-            requests=r.Request(
-                **req_params,
-            ),
+        req = r.SpreadsheetsSheetsBatchUpdateReqBody(  # type: ignore[arg-type]
+            requests=[  # type: ignore
+                r.Request(  # type: ignore[arg-type]
+                    **req_params,
+                )
+            ],
         )
         resp = (
             self.extra_sheets_v2_service.spreadsheetss.sheets_batch_update(
@@ -264,10 +278,10 @@ class FeishuSheetsShortcut:
         index: int = 0,
     ) -> dict[str, str]:
         r = extra_sheets_v2_model
-        op_sheet = r.AddSheet(
-            properties=r.Properties(
-                title=title,
-                index=index,
+        op_sheet = r.AddSheet(  # type: ignore[arg-type]
+            properties=r.Properties(  # type: ignore[arg-type]
+                title=title,  # type: ignore[arg-type]
+                index=index,  # type: ignore[arg-type]
             )
         )
         resp = self.batch_handle_sheets(
@@ -289,7 +303,7 @@ class FeishuSheetsShortcut:
         sheet_id: str,
     ) -> None:
         r = extra_sheets_v2_model
-        op_sheet = r.DeleteSheet(sheet_id=sheet_id)
+        op_sheet = r.DeleteSheet(sheet_id=sheet_id)  # type: ignore[arg-type]
         resp = self.batch_handle_sheets(
             ss_token=ss_token,
             delete_sheet=op_sheet,
@@ -306,10 +320,10 @@ class FeishuSheetsShortcut:
     ) -> None:
         r = extra_sheets_v2_model
         range_text = f"{sheet_id}!" + cr.to_param_range_pos_part()
-        req = r.SpreadsheetsMergeCellsReqBody(
-            spreadsheet_token=ss_token,
-            range=range_text,
-            merge_type=merge_type,
+        req = r.SpreadsheetsMergeCellsReqBody(  # type: ignore[arg-type]
+            spreadsheet_token=ss_token,  # type: ignore[arg-type]
+            range=range_text,  # type: ignore[arg-type]
+            merge_type=merge_type,  # type: ignore[arg-type]
         )
         resp = (
             self.extra_sheets_v2_service.spreadsheetss.merge_cells(
@@ -330,8 +344,8 @@ class FeishuSheetsShortcut:
     ) -> None:
         r = extra_sheets_v2_model
         range_text = sr.to_param_range()
-        req = r.SpreadsheetsUnmergeCellsReqBody(
-            range=range_text,
+        req = r.SpreadsheetsUnmergeCellsReqBody(  # type: ignore[arg-type]
+            range=range_text,  # type: ignore[arg-type]
         )
         resp = (
             self.extra_sheets_v2_service.spreadsheetss.unmerge_cells(
@@ -349,8 +363,8 @@ class FeishuSheetsShortcut:
         self,
         ss_token: str,
         sheet_id: str,
-        cr: CellsRange | None = None,
-        values: Sequence[Sequence[Any]] | None = None,
+        cr: Optional[CellsRange] = None,
+        values: Optional[Sequence[Sequence[Any]]] = None,
         headers: Sequence[Any] = (),
     ) -> None:
         if not values:
@@ -367,20 +381,20 @@ class FeishuSheetsShortcut:
             converted_values.append(list(row))
             n_rows += 1
         if not isinstance(cr, CellsRange):
-            cr = CellsRange()
+            cr = CellsRange()  # type: ignore[arg-type]
         if not cr.start_pos:
-            cr.start_pos = CellPos(x="A", y=1)
+            cr.start_pos = CellPos(x="A", y=1)  # type: ignore[arg-type]
         if not cr.end_pos:
-            cr.end_pos = CellPos(x="")
+            cr.end_pos = CellPos(x="")  # type: ignore[arg-type]
         cr.end_pos.x = cr.end_pos.x or utils.column_number_to_name(n_max_cols)
         cr.end_pos.y = cr.end_pos.y or (n_rows + cr.start_pos.y)
         range_text = f"{sheet_id}!" + cr.to_param_range_pos_part()
         resp = (
             self.extra_sheets_v2_service.spreadsheetss.values_prepend(
-                extra_sheets_v2_model.SpreadsheetsValuesPrependReqBody(
-                    value_range=extra_sheets_v2_model.ValueRange(
-                        range=range_text,
-                        values=converted_values,
+                extra_sheets_v2_model.SpreadsheetsValuesPrependReqBody(  # type: ignore[arg-type]
+                    value_range=extra_sheets_v2_model.ValueRange(  # type: ignore[arg-type]
+                        range=range_text,  # type: ignore[arg-type]
+                        values=converted_values,  # type: ignore[arg-type]
                     )
                 )
             )
@@ -394,8 +408,8 @@ class FeishuSheetsShortcut:
         self,
         ss_token: str,
         sheet_id: str,
-        cr: CellsRange | None = None,
-        values: Sequence[Sequence[Any]] | None = None,
+        cr: Optional[CellsRange] = None,
+        values: Optional[Sequence[Sequence[Any]]] = None,
         headers: Sequence[Any] = (),
         insert_data_option: Literal["OVERWRITE", "INSERT_ROWS"] = "OVERWRITE",
     ) -> None:
@@ -413,20 +427,20 @@ class FeishuSheetsShortcut:
             converted_values.append(list(row))
             n_rows += 1
         if not isinstance(cr, CellsRange):
-            cr = CellsRange()
+            cr = CellsRange()  # type: ignore[arg-type]
         if not cr.start_pos:
-            cr.start_pos = CellPos(x="A", y=1)
+            cr.start_pos = CellPos(x="A", y=1)  # type: ignore[arg-type]
         if not cr.end_pos:
-            cr.end_pos = CellPos(x="")
+            cr.end_pos = CellPos(x="")  # type: ignore[arg-type]
         cr.end_pos.x = cr.end_pos.x or utils.column_number_to_name(n_max_cols)
         cr.end_pos.y = cr.end_pos.y or (n_rows + cr.start_pos.y)
         range_text = f"{sheet_id}!" + cr.to_param_range_pos_part()
         resp = (
             self.extra_sheets_v2_service.spreadsheetss.values_append(
-                extra_sheets_v2_model.SpreadsheetsValuesAppendReqBody(
-                    value_range=extra_sheets_v2_model.ValueRange(
-                        range=range_text,
-                        values=converted_values,
+                extra_sheets_v2_model.SpreadsheetsValuesAppendReqBody(  # type: ignore[arg-type]
+                    value_range=extra_sheets_v2_model.ValueRange(  # type: ignore[arg-type]
+                        range=range_text,  # type: ignore[arg-type]
+                        values=converted_values,  # type: ignore[arg-type]
                     )
                 )
             )
@@ -441,7 +455,7 @@ class FeishuSheetsShortcut:
         self,
         ss_token: str,
         sheet_id: str,
-        cr_values: list[tuple[CellsRange, Sequence[Sequence[Any]]]],
+        cr_values: List[Tuple[CellsRange, Sequence[Sequence[Any]]]],
     ) -> None:
         if not cr_values:
             raise FeishuSheetsShortcutOperationError("input invalid")
@@ -455,22 +469,22 @@ class FeishuSheetsShortcut:
                 converted_values.append(list(row))
                 n_rows += 1
             if not cr.start_pos:
-                cr.start_pos = CellPos(x="A", y=1)
+                cr.start_pos = CellPos(x="A", y=1)  # type: ignore[arg-type]
             if not cr.end_pos:
-                cr.end_pos = CellPos(x="")
+                cr.end_pos = CellPos(x="")  # type: ignore[arg-type]
             cr.end_pos.x = cr.end_pos.x or utils.column_number_to_name(n_max_cols)
             cr.end_pos.y = cr.end_pos.y or (n_rows + cr.start_pos.y)
             range_text = f"{sheet_id}!" + cr.to_param_range_pos_part()
             value_ranges.append(
-                extra_sheets_v2_model.ValueRange(
-                    range=range_text,
-                    values=converted_values,
+                extra_sheets_v2_model.ValueRange(  # type: ignore[arg-type]
+                    range=range_text,  # type: ignore[arg-type]
+                    values=converted_values,  # type: ignore[arg-type]
                 ),
             )
         resp = (
             self.extra_sheets_v2_service.spreadsheetss.values_batch_update(
-                extra_sheets_v2_model.SpreadsheetsValuesBatchUpdateReqBody(
-                    value_ranges=value_ranges,
+                extra_sheets_v2_model.SpreadsheetsValuesBatchUpdateReqBody(  # type: ignore[arg-type]
+                    value_ranges=value_ranges,  # type: ignore[arg-type]
                 )
             )
             .set_spreadsheetToken(ss_token)
@@ -483,13 +497,13 @@ class FeishuSheetsShortcut:
         self,
         ss_token: str,
         sheet_id: str,
-        crs: list[CellsRange],
+        crs: List[CellsRange],
         value_render_option: Literal["ToString", "FormattedValue", "Formula", "UnformattedValue"] = "ToString",
         date_time_render_option: str = "FormattedString",
-    ) -> dict[str, list[list]]:
+    ) -> dict[str, List[List]]:
         if not crs:
             raise FeishuSheetsShortcutOperationError("input invalid")
-        range_texts = ",".join([f"{sheet_id}!" + cr.to_param_range_pos_part() for cr in crs])
+        range_texts = [f"{sheet_id}!" + cr.to_param_range_pos_part() for cr in crs]
         resp = (
             self.extra_sheets_v2_service.spreadsheetss.values_batch_get()
             .set_spreadsheetToken(ss_token)
@@ -502,7 +516,7 @@ class FeishuSheetsShortcut:
             raise FeishuSheetsShortcutOperationError(str(resp))
         range_cr__values = {}
         for vr in resp.data.value_ranges:
-            range_cr__values[SheetRange.from_literal(vr.range).to_param_range_pos_part()] = vr.values
+            range_cr__values[SheetRange.from_literal(vr.range).to_param_range_pos_part()] = vr.values  # type: ignore[arg-type]
         return range_cr__values
 
     def update_formula_value_cell(
@@ -511,7 +525,7 @@ class FeishuSheetsShortcut:
         sheet_id: str,
         formula_text: str,
         result_cell_pos: CellPos,
-        auto_merge_cells_range: CellsRange | None = None,
+        auto_merge_cells_range: Optional[CellsRange] = None,
     ) -> None:
         values = [
             [
@@ -523,7 +537,7 @@ class FeishuSheetsShortcut:
             sheet_id=sheet_id,
             cr_values=[
                 (
-                    CellsRange(start_pos=result_cell_pos, end_pos=result_cell_pos),
+                    CellsRange(start_pos=result_cell_pos, end_pos=result_cell_pos),  # type: ignore[arg-type]
                     values,
                 ),
             ],
@@ -541,7 +555,7 @@ class FeishuSheetsShortcut:
         sheet_id: str,
         target_cells_range: CellsRange,
         result_cell_pos: CellPos,
-        auto_merge_cells_range: CellsRange | None = None,
+        auto_merge_cells_range: Optional[CellsRange] = None,
     ) -> None:
         self.update_formula_value_cell(
             ss_token=ss_token,
@@ -562,14 +576,14 @@ class FeishuSheetsShortcut:
     ) -> None:
         resp = (
             self.extra_sheets_v2_service.spreadsheetss.insert_dimension_range(
-                extra_sheets_v2_model.SpreadsheetsInsertDimensionRangeReqBody(
-                    dimension=extra_sheets_v2_model.Dimension(
-                        sheet_id=sheet_id,
-                        major_dimension=dimension,
-                        start_index=start_index,
-                        end_index=end_index,
+                extra_sheets_v2_model.SpreadsheetsInsertDimensionRangeReqBody(  # type: ignore[arg-type]
+                    dimension=extra_sheets_v2_model.Dimension(  # type: ignore[arg-type]
+                        sheet_id=sheet_id,  # type: ignore[arg-type]
+                        major_dimension=dimension,  # type: ignore[arg-type]
+                        start_index=start_index,  # type: ignore[arg-type]
+                        end_index=end_index,  # type: ignore[arg-type]
                     ),
-                    inherit_style=inherit_style,
+                    inherit_style=inherit_style,  # type: ignore[arg-type]
                 )
             )
             .set_spreadsheetToken(
@@ -590,12 +604,12 @@ class FeishuSheetsShortcut:
     ) -> None:
         resp = (
             self.extra_sheets_v2_service.spreadsheetss.dimension_range_delete(
-                extra_sheets_v2_model.SpreadsheetsDimensionRangeDeleteReqBody(
-                    dimension=extra_sheets_v2_model.Dimension(
-                        sheet_id=sheet_id,
-                        major_dimension=dimension,
-                        start_index=start_index,
-                        end_index=end_index,
+                extra_sheets_v2_model.SpreadsheetsDimensionRangeDeleteReqBody(  # type: ignore[arg-type]
+                    dimension=extra_sheets_v2_model.Dimension(  # type: ignore[arg-type]
+                        sheet_id=sheet_id,  # type: ignore[arg-type]
+                        major_dimension=dimension,  # type: ignore[arg-type]
+                        start_index=start_index,  # type: ignore[arg-type]
+                        end_index=end_index,  # type: ignore[arg-type]
                     ),
                 )
             )
@@ -623,7 +637,7 @@ class FeishuSheetsShortcut:
             raise FeishuSheetsShortcutOperationError(f"not found sheet:{sheet_id} in {ss_token}")
         sg = sheet.grid_properties
         n_rows, n_columns = 0, 0
-        if sg:
+        if sg and sg.row_count is not None and sg.column_count is not None:
             n_rows, n_columns = sg.row_count, sg.column_count
         if n_rows <= 0 or n_columns <= 0:
             raise FeishuSheetsShortcutOperationError("fetch sheet properties failed")
@@ -654,7 +668,7 @@ class FeishuSheetsShortcut:
         self,
         ss_token: str,
         sheet_id: str,
-        values: list[list],
+        values: List[List],
         headers: Sequence[Any] = (),
     ):
         self.truncate_sheet(
@@ -673,7 +687,7 @@ class FeishuSheetsShortcut:
         ss_token: str,
         sheet_id: str,
         cell_pos: CellPos,
-        image_byte_array: list[int],
+        image_byte_array: List[int],
         image_name: str = "",
     ):
         cp = cell_pos.to_param_range()
@@ -682,10 +696,10 @@ class FeishuSheetsShortcut:
         body_range = f"{sheet_id}!{cp}:{cp}"
         resp = (
             self.extra_sheets_v2_service.spreadsheetss.values_image(
-                body=extra_sheets_v2_model.SpreadsheetsValuesImageReqBody(
-                    range=body_range,
-                    image=image_byte_array,
-                    name=image_name,
+                body=extra_sheets_v2_model.SpreadsheetsValuesImageReqBody(  # type: ignore[arg-type]
+                    range=body_range,  # type: ignore[arg-type]
+                    image=image_byte_array,  # type: ignore[arg-type]
+                    name=image_name,  # type: ignore[arg-type]
                 )
             )
             .set_spreadsheetToken(ss_token)

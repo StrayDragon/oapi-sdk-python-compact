@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import dataclasses
 from io import BytesIO
-from typing import Literal
+from typing import Literal, Optional
 
 import lark_oapi.api.drive.v1
 
@@ -39,7 +41,7 @@ class FeishuDriverShortcut:
             raise FeishuDriverShortcutOperationError(str(resp))
         return resp.data  # type: ignore
 
-    def __get_parent_node_by_parent_type(self, pt: str) -> str | None:
+    def __get_parent_node_by_parent_type(self, pt: str) -> Optional[str]:
         return {
             "doc_image": "doccnFivLCfJfblZjGZtxgabcef",
             "doc_file": "doccnFivLCfJfblZjGZtxgabcef",
@@ -68,8 +70,8 @@ class FeishuDriverShortcut:
         ],
         size: int,
         file: BytesIO,
-        parent_node: str | None = None,
-        extra: str | None = None,
+        parent_node: Optional[str] = None,
+        extra: Optional[str] = None,
     ) -> lark_oapi.api.drive.v1.UploadAllMediaResponseBody:
         client = self.s.upstream_client
         _parent_node = self.__get_parent_node_by_parent_type(parent_type)
@@ -118,8 +120,8 @@ class FeishuDriverShortcut:
             "ccm_import_open",
         ],
         size: int,
-        parent_node: str | None = None,
-        extra: str | None = None,
+        parent_node: Optional[str] = None,
+        extra: Optional[str] = None,
     ) -> lark_oapi.api.drive.v1.UploadPrepareMediaResponseBody:
         client = self.s.upstream_client
         _parent_node = self.__get_parent_node_by_parent_type(parent_type)
@@ -158,7 +160,7 @@ class FeishuDriverShortcut:
         size: int,
         chunked_file: BytesIO,
         seq: int = 0,
-        checksum: str | None = None,
+        checksum: Optional[str] = None,
     ):
         client = self.s.upstream_client
         req = (

@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+
 def column_number_to_name(n: int) -> str:
     """
     根据表格的列索引获取列名，从 0 开始

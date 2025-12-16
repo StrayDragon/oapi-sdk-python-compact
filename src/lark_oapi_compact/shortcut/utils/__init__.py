@@ -1,7 +1,11 @@
+from __future__ import annotations
+
+from typing import Dict, Optional
+
 import attr
 
 
-def convert_model_to_dict(o) -> dict | None:
+def convert_model_to_dict(o) -> Optional[Dict]:
     if attr.has(o):
         return attr.asdict(o)
     elif hasattr(o, "_types"):
@@ -10,7 +14,7 @@ def convert_model_to_dict(o) -> dict | None:
         return None
 
 
-def convert_remaintain_extra_model_to_dict(o) -> dict | None:
+def convert_remaintain_extra_model_to_dict(o) -> Optional[Dict]:
     if not hasattr(o, "_types"):
         return None
     kv = {}
