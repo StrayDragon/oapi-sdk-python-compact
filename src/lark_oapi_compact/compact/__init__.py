@@ -14,7 +14,6 @@ from .pydantic_compat import (
     create_field,
     field_validator,
     get_model_config,
-    get_version_info,
 )
 
 __all__ = [
@@ -29,7 +28,6 @@ __all__ = [
     "create_field",
     "field_validator",
     "get_model_config",
-    "get_version_info",
     "IS_V2",
     "PYDANTIC_VERSION",
 ]
